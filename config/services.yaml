@@ -1,0 +1,28 @@
+parameters:
+    env(NITRADO_API_TOKEN): ''
+    env(NITRADO_SERVICE_ID): ''
+    ark.audit.output_path: '%kernel.project_dir%/var/audits'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/DTO/'
+            - '../src/Kernel.php'
+
+    App\ArkAuditor\Client\NitradoApiClient:
+        arguments:
+            $apiToken: '%env(NITRADO_API_TOKEN)%'
+
+    App\ArkAuditor\Service\EconomyAuditor:
+        arguments:
+            $serviceId: '%env(NITRADO_SERVICE_ID)%'
+
+    App\ArkAuditor\Command\AuditEconomyCommand:
+        arguments:
+            $auditOutputPath: '%ark.audit.output_path%'
